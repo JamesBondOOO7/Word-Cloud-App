@@ -3,6 +3,8 @@ from wordcloud import WordCloud, STOPWORDS
 from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
+from pathlib import Path
+import os
 
 st.title("WORD CLOUD")
 
@@ -22,6 +24,11 @@ def draw_wordcloud(background_color, max_words, img, width, height, text):
     plt.axis('off')
     st.pyplot()
 
+def drawImg(img):
+    plt.imshow(img)
+    plt.axis('off')
+    plt.show()
+
 
 def main():
     st.sidebar.title("🌟 Select your favourite Image 🌟")
@@ -29,48 +36,16 @@ def main():
     img = st.sidebar.selectbox("Mask Images for Word Cloud",("CLOUD","INDIA","SPY","STAR","UPVOTE","LEAF","BIRD"))
 
     st.sidebar.header("Preview")
-    img1 = Image.open("cloud.png")
-    image = img1
-    st.sidebar.image(img1, width=250, caption="CLOUD")
 
-    img2 = Image.open("india.png")
-    st.sidebar.image(img2, width=250, caption="INDIA")
+    p = Path("./Images/")
 
-    img3 = Image.open("spy.png")
-    st.sidebar.image(img3, width=250, caption="SPY")
-
-    img4 = Image.open("star.png")
-    st.sidebar.image(img4, width=250, caption="STAR")
-
-    img5 = Image.open("upvote.png")
-    st.sidebar.image(img5, width=250, caption="UPVOTE")
-
-    img6 = Image.open("leaf.png")
-    st.sidebar.image(img6, width=250, caption="LEAF")
-
-    img7 = Image.open("bird.png")
-    st.sidebar.image(img7, width=250, caption="BIRD")
-
-    if img == "INDIA":
-        image = img2
-
-    elif img == "SPY":
-        image = img3
-
-    elif img == "STAR":
-        image = img4
-
-    elif img == "UPVOTE":
-        image = img5
-
-    elif img == "LEAF":
-        image = img6
-
-    elif img == "BIRD":
-        image = img7
-
-    else:
-        image = img1
+    data = {}
+    dirs = p.glob("*")
+    for file in dirs:
+        Img = Image.open("./" + str(file))
+        name = str(file).split('\\')[-1][:-4].upper()
+        data[name] = Img
+        st.sidebar.image(Img, width=250, caption=name)
 
     st.header("Select Background Color")
     bgc = st.radio("Background Color", ("White","Black","Yellow","Red","Blue","Green","Orange","Violet"), key="bgc")
@@ -85,9 +60,8 @@ def main():
     msg = st.text_area("Enter the Text","Type Here...")
 
     if st.button("Submit",key="b1"):
-        draw_wordcloud(bgc, max_words, image, width, height, msg)
-
-
+        draw_wordcloud(bgc, max_words, data[img], width, height, msg)
+        
 
 if __name__ == '__main__':
     main()
